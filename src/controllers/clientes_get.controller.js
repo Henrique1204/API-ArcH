@@ -1,4 +1,5 @@
 const { select } = require('../repositories/clientes.repositorie');
+const ExceptionAPI = require('../util/ExceptionAPI');
 
 module.exports = async (req, res) => {
     try {
@@ -9,8 +10,19 @@ module.exports = async (req, res) => {
         else if (_email) consulta = await select('email', _email);
         else consulta = await select(null);
 
-        res.status(200).send(consulta.resposta);
+        if (!consulta.ok) throw new ExceptionAPI(null, consulta.resposta);
+
+        if (consulta.resposta.length === 0) throw new ExceptionAPI(404);
+
+        return res.status(200).send(consulta.resposta);
     } catch (erro) {
-        console.log(erro);
+        if (erro.tipo === 'API') {
+            const { cod, mensagem, erroSQL } = erro;
+
+            if (erroSQL) return res.status(cod).send({ status: 'Falha', mensagem, erroSQL });
+            return res.status(cod).send({ status: 'Falha', mensagem });
+        }
+
+        return res.status(500).send({ status: 'Falha', mensagem: erro.message });
     }
 };
