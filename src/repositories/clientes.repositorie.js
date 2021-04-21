@@ -10,6 +10,19 @@ const select = async (campo, valor) => {
     return resposta;
 };
 
+const insert = async (body) => {
+    const { nome, email, cidade, estado } = body;
+
+    const sql = (
+        `INSERT INTO clientes (id, nome, email, cidade, estado) VALUES 
+        (null, '${nome}', '${email}', '${cidade}', '${estado}')`
+    );
+
+    const resposta = await query(sql, 'clientes', 'insert');
+    return resposta;
+};
+
 module.exports = {
-    select
+    select,
+    insert
 };
