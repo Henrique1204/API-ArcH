@@ -8,6 +8,9 @@ app.use(express.json());
 const cors = require('cors');
 app.use(cors({ origin: true, credentials: true }));
 
+const conexaoDB = require('./models/dbCon.js');
+conexaoDB.connect();
+
 const server = http.createServer(app); 
 server.listen(8000, '127.0.0.1');
 console.log('Servidor escutando na porta 8000...');
